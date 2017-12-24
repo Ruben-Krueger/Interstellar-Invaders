@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Interstellar Invaders, by Ruben Krueger</title>
+    <link rel="stylesheet" type="text/css" href="main.css"/>
+</head>
+<body>
+
+
+<canvas id="canvas"></canvas>
+<script>
+
+    // creating the canvas
+    var canvas = document.getElementById("canvas");
+    var ctx = canvas.getContext("2d");
+
+    // making the canvas the width and height of the screen
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    // how fast the game will be drawn
+    var frameRate = 1000/500;
+    var frames = 0;
+
+    // player variables
+    var dx = 50;
+    var health = 100;
+    var healthOffsetX = 50;
+    var healthOffsetY = 50;
+    var score = 0;
+    var playerLaserBeams = [];
+
+    var enemyArray = [];
+    var enemyModulo = 50;
+    var enemyDamage = 10;
+
+    // listening for keyboard events
+    document.addEventListener("keydown", keyDownHandler, false);
+    document.addEventListener("keyup", keyUpHandler, false);
+
+    // star variables
+    var maxRadius = 2;
+    var minRadius = 1;
+    var starArray = [];
+    var starDY = 4;
+    var starModulus = 10;
+
+    // creating objects in game
+    var player = new SpaceShip(canvas.width/ 2, canvas.height);
+
+    var game = true;
+
+    function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            player.draw();
+            drawStars();
+            drawHealth();
+            drawScore();
+            drawEnemies();
+            enemyCollision();
+            drawPlayerLaserBeams();
+            laserCollision();
+            if(health <= 0) gameOver();
+            frames++;
+    }
+
+    function keyDownHandler(e) {
+        if(e.keyCode === 39) {
+            player.move(dx);
+            player.draw();
+        }
+        else if(e.keyCode === 37) {
+            player.move(-dx);
+            player.draw();
+        }
+        else if(e.keyCode === 32) {
+            player.shoot();
+        }
+    }
+
+    function gameOver() {
+        game = false;
+    }
+
+    function laserCollision() {
+        if(playerLaserBeams.length === 0) return false;
+        for(var i = 0; i < enemyArray.length; i++) {
+            for(var j = 0; j < playerLaserBeams.length; j++) {
+                // check if the laser x coordinate is between the enemy's left and right x coordinates
+                if(enemyArray[i].getLeftX() <= playerLaserBeams[j].getLeftX() && enemyArray[i].getRightX() <= playerLaserBeams[j].getLeftX()) {
+                    enemyArray.splice(i, 1);
+                    score++;
+                    console.log("hit");
+                }
+                else if(enemyArray[i].getLeftX() <= playerLaserBeams[j].getRightX() && enemyArray[i].getRightX() <= playerLaserBeams[j].getRightX()) {
+                    enemyArray.splice(i, 1);
+                    score++;
+                    console.log("hit");
+                }
+
+                    /*if (enemyArray[i].getY() <= playerLaserBeams[j].getTopY() && enemyArray[i].getY() >= playerLaserBeams[j].getBottomY()) {
+
+                    }*/
+                }
+        }
+    }
+
+    function enemyCollision() {
+        for(var i = 0; i < enemyArray.length; i++) {
+            if(enemyArray[i].x > player.getLeftX() && enemyArray[i].x < player.getRightX() && enemyArray[i].getY() === player.getY()) {
+                health -= enemyArray[i].damage;
+                enemyArray.splice(i, 1);
+            }
+            if(enemyArray[i].getLeftX() ) {
+                health -= enemyArray[i].damage;
+                enemyArray.splice(i, 1);
+            }
+        }
+    }
+
+    function drawEnemies() {
+        if(frames % enemyModulo === 0) {
+            var randomX = Math.random() * canvas.width;
+            var enemy = new Enemy(randomX, 0, enemyDamage);
+            enemyArray.push(enemy);
+        }
+        for(var i = 0; i < enemyArray.length; i++) {
+            if(enemyArray[i].getY() > canvas.height) enemyArray.splice(i, 1);
+            enemyArray[i].update();
+            enemyArray[i].draw();
+        }
+    }
+
+    function keyUpHandler(e) {
+      /*  if(e.keyCode === 39) {
+            player.move(dx);
+            player.draw();
+        }
+        else if(e.keyCode === 37) {
+            player.move(-dx);
+            player.draw();
+        }
+        else if(e.keyCode === 32) {
+            player.shoot();
+        }*/
+    }
+
+    function drawPlayerLaserBeams() {
+        for(var i = 0; i < playerLaserBeams.length; i ++) {
+            playerLaserBeams[i].draw();
+            playerLaserBeams[i].update();
+            if(playerLaserBeams[i].y < 0) playerLaserBeams.splice(i, 1);
+        }
+    }
+
+    function drawHealth() {
+        ctx.font = "30px Arial";
+        ctx.fillStyle = "white";
+        ctx.textAlign = "right";
+        ctx.fillText("Health " + health, canvas.width - healthOffsetX, healthOffsetY);
+    }
+
+    function drawScore() {
+        ctx.font = "30px Arial";
+        ctx.fillStyle = "white";
+        ctx.textAlign = "right";
+        ctx.fillText("Score " + score, canvas.width - healthOffsetX, healthOffsetY * 2);
+    }
+
+    function drawStars() {
+        if(frames % starModulus === 0){
+            var x = Math.random() * canvas.width;
+            var radius = Math.random() * maxRadius + minRadius;
+            var star = new Star(x, 0, radius);
+            starArray.push(star);
+        }
+        for(var i = 0; i < starArray.length; i ++) {
+            starArray[i].draw();
+            starArray[i].update();
+            if(starArray[i].y > canvas.height) starArray.splice(i, 1);
+        }
+    }
+
+
+    // class for player space ship
+    function SpaceShip(x, y) {
+
+        // private variables
+        var baseWidth = 50;
+        var baseHeight = 100;
+        var wingHeight = 50;
+        var wingWidth = 50;
+        var noseHeight = 20;
+        var gunLength = 60;
+        var gunWidth = 5;
+
+        this.y = y;
+        var laserWidth = 5;
+        var laserHeight = 40;
+
+
+        // draws the bottom portion of the spaceship
+        function drawBase() {
+            ctx.beginPath();
+            ctx.rect(x - baseWidth/2, y - baseHeight, baseWidth, baseHeight);
+            ctx.fillStyle = "white";
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        function drawWings() {
+
+            ctx.beginPath();
+            ctx.fillStyle = "white";
+
+            //left wing
+            ctx.moveTo(x - baseWidth/2, y - wingHeight);
+            ctx.lineTo(x - baseWidth/2 - wingWidth, y);
+            ctx.lineTo(x - baseWidth/2, y);
+
+            //right wing
+            ctx.moveTo(x - baseWidth/2 + baseWidth, y - wingHeight);
+            ctx.lineTo(x - baseWidth/2 + baseWidth + wingWidth, y);
+            ctx.lineTo(x - baseWidth/2 + baseWidth, y);
+            ctx.fill();
+
+        }
+
+        function drawNose() {
+            ctx.beginPath();
+            ctx.fillStyle = "white";
+
+            ctx.moveTo(x - baseWidth/2, y - baseHeight);
+            ctx.lineTo(x, y - baseHeight - noseHeight);
+            ctx.lineTo(x + baseWidth/2, y - baseHeight);
+            ctx.fill();
+        }
+
+
+        function drawGuns() {
+            ctx.beginPath();
+            ctx.fillStyle = "white";
+
+            ctx.beginPath();
+            //the left gun
+            ctx.rect(x - baseWidth/2 - wingWidth, y - gunLength, gunWidth, gunLength);
+            // the right gun
+            ctx.rect(x + baseWidth/2 + wingWidth - 4, y - gunLength, gunWidth, gunLength);
+            ctx.fillStyle = "white";
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        this.getLeftX = function() {
+           return x - baseWidth/2 - wingWidth;
+        };
+
+        this.getRightX = function() {
+            return x + baseWidth/2 + wingWidth - 4;
+        };
+
+        this.move = function(dx){
+            x += dx;
+        };
+
+
+        this.draw = function() {
+            drawBase();
+            drawWings();
+            drawNose();
+            drawGuns();
+        };
+
+        this.shoot = function() {
+            var laserBeam = new PlayerLaserBeam(x - baseWidth/2 - wingWidth, x + baseWidth/2 + wingWidth - 4, canvas.height, laserWidth, laserHeight);
+            playerLaserBeams.push(laserBeam);
+        }
+    }
+
+    function Star(x, y, radius) {
+
+        this.y = y;
+
+        this.draw = function() {
+            ctx.beginPath();
+            ctx.arc(x,y,radius,0,2*Math.PI);
+            ctx.fillStyle = "white";
+            ctx.fill();
+        };
+
+        this.update = function() {
+            y += starDY;
+        }
+
+    }
+
+    function PlayerLaserBeam(leftX, rightX, y, width, height) {
+        var laserSpeed = -4;
+
+        this.draw = function() {
+            ctx.beginPath();
+            // laser on the left
+            ctx.rect(leftX, y, width, height);
+
+            //lasers on the right
+            ctx.rect(rightX, y, width, height);
+            ctx.fillStyle = "red";
+            ctx.fill();
+            ctx.closePath();
+        };
+
+        this.update = function() {
+            y += laserSpeed;
+        };
+
+        this.getLeftX = function() {
+            return leftX;
+        };
+
+        this.getRightX = function() {
+            return rightX;
+        };
+
+        this.getTopY = function() {
+            return y;
+        };
+
+        this.getBottomY = function() {
+            return y + height;
+        }
+
+    }
+
+    function Enemy(x, y, damage) {
+        var width = 25;
+        var height = 25;
+        var enemySpeed = 2;
+        this.damage = damage;
+
+        this.draw = function() {
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x - width, y + height);
+            ctx.lineTo(x + width, y + height);
+            ctx.fillStyle = "purple";
+            ctx.fill();
+            ctx.closePath();
+        };
+
+        this.update = function() {
+            y += enemySpeed;
+        };
+
+        this.getLeftX = function() {
+            return x - width;
+        };
+
+        this.getRightX = function() {
+            return x + width;
+        };
+
+        this.getY = function() {
+            return y;
+        }
+
+
+    }
+
+    // Drawing the game
+    setInterval(draw, frameRate);
+
+</script>
+</body>
+</html>
