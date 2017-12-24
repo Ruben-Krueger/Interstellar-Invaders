@@ -31,7 +31,9 @@
     var score = 0;
     var playerLaserBeams = [];
 
+    // array of all enemies in the game, which are purple triangles
     var enemyArray = [];
+
     var enemyModulo = 50;
     var enemyDamage = 10;
 
@@ -46,10 +48,9 @@
     var starDY = 4;
     var starModulus = 10;
 
-    // creating objects in game
+    // creating the player object in the bottom middle of the screen
     var player = new SpaceShip(canvas.width/ 2, canvas.height);
 
-    var game = true;
 
     function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -66,21 +67,22 @@
     }
 
     function keyDownHandler(e) {
+        // if left arrow key is pressed
         if(e.keyCode === 39) {
             player.move(dx);
             player.draw();
-        }
+        }   // if right arrow key is pressed
         else if(e.keyCode === 37) {
             player.move(-dx);
             player.draw();
         }
+        // if space bar is pressed
         else if(e.keyCode === 32) {
             player.shoot();
         }
     }
 
     function gameOver() {
-        game = false;
     }
 
     function laserCollision() {
@@ -106,13 +108,14 @@
         }
     }
 
+   // Detects if spaceship has collided with enemy.
     function enemyCollision() {
         for(var i = 0; i < enemyArray.length; i++) {
-            if(enemyArray[i].x > player.getLeftX() && enemyArray[i].x < player.getRightX() && enemyArray[i].getY() === player.getY()) {
+            /*if(enemyArray[i].x > player.getLeftX() && enemyArray[i].x < player.getRightX() && enemyArray[i].getY() === player.getY()) {
                 health -= enemyArray[i].damage;
                 enemyArray.splice(i, 1);
-            }
-            if(enemyArray[i].getLeftX() ) {
+            }*/
+            if(enemyArray[i].getRightX() <= player.getLeftX() && enemyArray[i].getLeftX() >= player.getRightX()) {
                 health -= enemyArray[i].damage;
                 enemyArray.splice(i, 1);
             }
@@ -154,6 +157,7 @@
         }
     }
 
+    // draws to the screen the health of the player
     function drawHealth() {
         ctx.font = "30px Arial";
         ctx.fillStyle = "white";
@@ -161,6 +165,7 @@
         ctx.fillText("Health " + health, canvas.width - healthOffsetX, healthOffsetY);
     }
 
+    // draws to the screen the player score
     function drawScore() {
         ctx.font = "30px Arial";
         ctx.fillStyle = "white";
@@ -246,7 +251,7 @@
             //the left gun
             ctx.rect(x - baseWidth/2 - wingWidth, y - gunLength, gunWidth, gunLength);
             // the right gun
-            ctx.rect(x + baseWidth/2 + wingWidth - 4, y - gunLength, gunWidth, gunLength);
+            ctx.rect(x + baseWidth/2 + wingWidth - gunWidth, y - gunLength, gunWidth, gunLength);
             ctx.fillStyle = "white";
             ctx.fill();
             ctx.closePath();
@@ -257,7 +262,7 @@
         };
 
         this.getRightX = function() {
-            return x + baseWidth/2 + wingWidth - 4;
+            return x + baseWidth/2 + wingWidth - gunWidth;
         };
 
         this.move = function(dx){
@@ -336,6 +341,7 @@
         var width = 25;
         var height = 25;
         var enemySpeed = 2;
+        var color = "purple";
         this.damage = damage;
 
         this.draw = function() {
@@ -343,7 +349,7 @@
             ctx.moveTo(x, y);
             ctx.lineTo(x - width, y + height);
             ctx.lineTo(x + width, y + height);
-            ctx.fillStyle = "purple";
+            ctx.fillStyle = color;
             ctx.fill();
             ctx.closePath();
         };
