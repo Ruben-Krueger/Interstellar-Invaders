@@ -90,9 +90,12 @@
        // if(playerLaserBeamsArray.length === 0) return false;
         for(var i = enemyArray.length - 1; i >=	0; i--) {
             for(var j = playerLaserBeamsArray.length-1; j >= 0; j++) {
-				if(playerLaserBeamsArray[j] == 'undefined') break;
+		// make sure not to access an object which does not exist.
+		if(playerLaserBeamsArray[j] == 'undefined') break;
+		    	// check if laser beam is at correct y coordinate
        			if(playerLaserBeamsArray[j].getTopY() > enemyArray[i].getY() && playerLaserBeamsArray[j].getBottomY() < enemyArray[i].getY()) {
-					if(playerLaserBeamsArray[j].getLeftX() <= enemyArray[i].getLeftX() && playerLaserBeamsArray[j].getRightX() <= enemyArray[i].getRightX()){
+				// check if laser beam is between the enemy's furthermost left and right x-coordinates
+				if(playerLaserBeamsArray[j].getLeftX() <= enemyArray[i].getLeftX() && playerLaserBeamsArray[j].getRightX() <= enemyArray[i].getRightX()){
 					   score ++;
 						enemyArray[i].splice(i, 1);
 					}
