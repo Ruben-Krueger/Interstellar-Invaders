@@ -131,7 +131,7 @@
     }
 
     function drawPlayerLaserBeams() {
-        for(var i = playerLaserBeam.length - 1; i >= 0; i --) {
+        for(var i = playerLaserBeams.length - 1; i >= 0; i --) {
             playerLaserBeams[i].draw();
             playerLaserBeams[i].update();
             if(playerLaserBeams[i].y < 0) playerLaserBeams.splice(i, 1);
