@@ -7,7 +7,6 @@
 </head>
 <body>
 
-
 <canvas id="canvas"></canvas>
 <script>
 
@@ -51,19 +50,21 @@
     // creating the player object in the bottom middle of the screen
     var player = new SpaceShip(canvas.width/ 2, canvas.height);
 
+	   // Drawing the game
+    setInterval(draw, frameRate);
 
     function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            player.draw();
-            drawStars();
-            drawHealth();
-            drawScore();
-            drawEnemies();
-            enemyCollision();
-            drawPlayerLaserBeams();
-            laserCollision();
-            if(health <= 0) gameOver();
-            frames++;
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		player.draw();
+		drawStars();
+		drawHealth();
+		drawScore();
+		drawEnemies();
+		enemyCollision();
+		drawPlayerLaserBeams();
+		laserCollision();
+		if(health <= 0) gameOver();
+		frames++;
     }
 
     function keyDownHandler(e) {
@@ -89,34 +90,16 @@
         if(playerLaserBeams.length === 0) return false;
         for(var i = 0; i < enemyArray.length; i++) {
             for(var j = 0; j < playerLaserBeams.length; j++) {
-                // check if the laser x coordinate is between the enemy's left and right x coordinates
-                if(enemyArray[i].getLeftX() <= playerLaserBeams[j].getLeftX() && enemyArray[i].getRightX() <= playerLaserBeams[j].getLeftX()) {
-                    enemyArray.splice(i, 1);
-                    score++;
-                }
-                else if(enemyArray[i].getLeftX() <= playerLaserBeams[j].getRightX() && enemyArray[i].getRightX() <= playerLaserBeams[j].getRightX()) {
-                    enemyArray.splice(i, 1);
-                    score++;
-                }
-
-                    /*if (enemyArray[i].getY() <= playerLaserBeams[j].getTopY() && enemyArray[i].getY() >= playerLaserBeams[j].getBottomY()) {
-
-                    }*/
-                }
+       
         }
     }
+	}
+
 
    // Detects if spaceship has collided with enemy.
     function enemyCollision() {
         for(var i = 0; i < enemyArray.length; i++) {
-            /*if(enemyArray[i].x > player.getLeftX() && enemyArray[i].x < player.getRightX() && enemyArray[i].getY() === player.getY()) {
-                health -= enemyArray[i].damage;
-                enemyArray.splice(i, 1);
-            }*/
-            if(enemyArray[i].getRightX() <= player.getLeftX() && enemyArray[i].getLeftX() >= player.getRightX()) {
-                health -= enemyArray[i].damage;
-                enemyArray.splice(i, 1);
-            }
+     
         }
     }
 
@@ -126,7 +109,7 @@
             var enemy = new Enemy(randomX, 0, enemyDamage);
             enemyArray.push(enemy);
         }
-        for(var i = 0; i < enemyArray.length; i++) {
+        for(var i = enemyArray.length; i >= 0; i--) {
             if(enemyArray[i].getY() > canvas.height) enemyArray.splice(i, 1);
             enemyArray[i].update();
             enemyArray[i].draw();
@@ -148,7 +131,7 @@
     }
 
     function drawPlayerLaserBeams() {
-        for(var i = 0; i < playerLaserBeams.length; i ++) {
+        for(var i = playerLaserBeam.length - 1; i >= 0; i --) {
             playerLaserBeams[i].draw();
             playerLaserBeams[i].update();
             if(playerLaserBeams[i].y < 0) playerLaserBeams.splice(i, 1);
@@ -276,14 +259,14 @@
         };
 
         this.shoot = function() {
-            var laserBeam = new PlayerLaserBeam(x - baseWidth/2 - wingWidth, x + baseWidth/2 + wingWidth - 4, canvas.height, laserWidth, laserHeight);
+            var laserBeam = new PlayerLaserBeam(x - baseWidth/2 - wingWidth, x + baseWidth/2 + wingWidth - gunWidth, canvas.height, laserWidth, laserHeight);
             playerLaserBeams.push(laserBeam);
         }
     }
 
     function Star(x, y, radius) {
-
-        this.y = y;
+		
+		this.y = y;
 
         this.draw = function() {
             ctx.beginPath();
@@ -366,14 +349,12 @@
 
         this.getY = function() {
             return y;
-        }
+        };
 
 
     }
 
-    // Drawing the game
-    setInterval(draw, frameRate);
-
+	
 </script>
 </body>
 </html>
