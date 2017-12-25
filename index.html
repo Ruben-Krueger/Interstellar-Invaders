@@ -28,7 +28,7 @@
     var healthOffsetX = 50;
     var healthOffsetY = 50;
     var score = 0;
-    var playerLaserBeams = [];
+    var playerLaserBeamsArray = [];
 
     // array of all enemies in the game, which are purple triangles
     var enemyArray = [];
@@ -87,12 +87,18 @@
     }
 
     function laserCollision() {
-        if(playerLaserBeams.length === 0) return false;
-        for(var i = 0; i < enemyArray.length; i++) {
-            for(var j = 0; j < playerLaserBeams.length; j++) {
-       
-        }
-    }
+        if(playerLaserBeamsArray.length === 0) return false;
+        for(var i = enemyArray.length - 1; i >=	0; --) {
+            for(var j = playerLaserBeamsArray.length-1; j >= 0; j++) {
+       			if(playerLaserBeamsArray[j].getTopY() > enemyArray[i].getY() && playerLaserBeamsArray[j].getBottomY() < enemyArray[i].getY()) {
+					if(playerLaserBeamsArray[j].getLeftX() <= enemyArray[i].getLeftX() && playerLaserBeamsArray[j].getRightX() <= enemyArray[i].getRightX()){
+					   score ++;
+						enemyArray[i].splice(i, 1);
+					}
+				}
+				
+			}
+    	}
 	}
 
 
@@ -131,10 +137,10 @@
     }
 
     function drawPlayerLaserBeams() {
-        for(var i = playerLaserBeams.length - 1; i >= 0; i --) {
-            playerLaserBeams[i].draw();
-            playerLaserBeams[i].update();
-            if(playerLaserBeams[i].y < 0) playerLaserBeams.splice(i, 1);
+        for(var i = playerLaserBeamsArray.length - 1; i >= 0; i --) {
+            playerLaserBeamsArray[i].draw();
+            playerLaserBeamsArray[i].update();
+            if(playerLaserBeamsArray[i].y < 0) playerLaserBeamsArray.splice(i, 1);
         }
     }
 
@@ -260,7 +266,7 @@
 
         this.shoot = function() {
             var laserBeam = new PlayerLaserBeam(x - baseWidth/2 - wingWidth, x + baseWidth/2 + wingWidth - gunWidth, canvas.height, laserWidth, laserHeight);
-            playerLaserBeams.push(laserBeam);
+            playerLaserBeamsArray.push(laserBeam);
         }
     }
 
