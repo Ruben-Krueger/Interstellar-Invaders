@@ -89,8 +89,8 @@
     function laserCollision() {
        // if(playerLaserBeamsArray.length === 0) return false;
         for(var i = enemyArray.length - 1; i >=	0; i--) {
-            for(var j = playerLaserBeamsArray.length-1; j >= 0; j++) {
-				if(playerLaserBeamsArray[j] == 'undefined') break;
+            for(var j = playerLaserBeamsArray.length-1; j >= 0; j--) {
+				if(playerLaserBeamsArray[j] === 'undefined') break;
        			if(playerLaserBeamsArray[j].getTopY() > enemyArray[i].getY() && playerLaserBeamsArray[j].getBottomY() < enemyArray[i].getY()) {
 					if(playerLaserBeamsArray[j].getLeftX() <= enemyArray[i].getLeftX() && playerLaserBeamsArray[j].getRightX() <= enemyArray[i].getRightX()){
 					   score ++;
