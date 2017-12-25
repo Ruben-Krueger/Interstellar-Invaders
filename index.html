@@ -89,20 +89,16 @@
     function laserCollision() {
        // if(playerLaserBeamsArray.length === 0) return false;
         for(var i = enemyArray.length - 1; i >=	0; i--) {
-<<<<<<< HEAD
             for(var j = playerLaserBeamsArray.length-1; j >= 0; j--) {
 				if(playerLaserBeamsArray[j] === 'undefined') break;
-=======
-            for(var j = playerLaserBeamsArray.length-1; j >= 0; j++) {
 		// make sure not to access an object which does not exist.
 		if(playerLaserBeamsArray[j] == 'undefined') break;
 		    	// check if laser beam is at correct y coordinate
->>>>>>> 14ea246aa1f776ba85b0de69a34e3741f3c70e29
        			if(playerLaserBeamsArray[j].getTopY() > enemyArray[i].getY() && playerLaserBeamsArray[j].getBottomY() < enemyArray[i].getY()) {
 				// check if laser beam is between the enemy's furthermost left and right x-coordinates
 				if(playerLaserBeamsArray[j].getLeftX() <= enemyArray[i].getLeftX() && playerLaserBeamsArray[j].getRightX() <= enemyArray[i].getRightX()){
 					   score ++;
-						enemyArray[i].splice(i, 1);
+					   enemyArray[i].splice(i, 1);
 					}
 				}
 				
