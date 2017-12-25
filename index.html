@@ -247,7 +247,7 @@
         };
 
         this.move = function(dx){
-			if(this.getLeftX() > -dx && this.getRightX() < canvas.width) x += dx;
+			if(this.getLeftX() > -dx && this.getRightX() < canvas.width - dx) x += dx;
         };
 
 
