@@ -109,7 +109,7 @@
             var enemy = new Enemy(randomX, 0, enemyDamage);
             enemyArray.push(enemy);
         }
-        for(var i = enemyArray.length; i >= 0; i--) {
+        for(var i = enemyArray.length - 1; i >= 0; i--) {
             if(enemyArray[i].getY() > canvas.height) enemyArray.splice(i, 1);
             enemyArray[i].update();
             enemyArray[i].draw();
