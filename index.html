@@ -93,12 +93,10 @@
                 if(enemyArray[i].getLeftX() <= playerLaserBeams[j].getLeftX() && enemyArray[i].getRightX() <= playerLaserBeams[j].getLeftX()) {
                     enemyArray.splice(i, 1);
                     score++;
-                    console.log("hit");
                 }
                 else if(enemyArray[i].getLeftX() <= playerLaserBeams[j].getRightX() && enemyArray[i].getRightX() <= playerLaserBeams[j].getRightX()) {
                     enemyArray.splice(i, 1);
                     score++;
-                    console.log("hit");
                 }
 
                     /*if (enemyArray[i].getY() <= playerLaserBeams[j].getTopY() && enemyArray[i].getY() >= playerLaserBeams[j].getBottomY()) {
