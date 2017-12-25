@@ -247,7 +247,7 @@
         };
 
         this.move = function(dx){
-            x += dx;
+			if(this.getLeftX > 0) x += dx;
         };
 
 
