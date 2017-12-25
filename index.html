@@ -85,19 +85,29 @@
 
     function gameOver() {
     }
+	
+	// Returns whether or not an object is empty, i.e., does not exist. 
+	function isEmpty(obj) {
+		for(var key in obj) {
+			if(obj.hasOwnProperty(key))
+				return false;
+		}
+		return true;
+	}
 
     function laserCollision() {
        // if(playerLaserBeamsArray.length === 0) return false;
-        for(var i = enemyArray.length - 1; i >=	0; i--) {
-            for(var j = playerLaserBeamsArray.length-1; j >= 0; j--) {
+        for(var i = enemyArray.length - 1; i >=	0; --i) {
+            for(var j = playerLaserBeamsArray.length-1; j >= 0; --j) {
 				// make sure not to access an object which does not exist.
-				if(playerLaserBeamsArray[j] === 'undefined') break;
+				if(isEmpty(playerLaserBeamsArray[j])) break;
+				if(isEmpty(enemyArray[i])) break;
 		    	// check if laser beam is at correct y coordinate
-       			if(playerLaserBeamsArray[j].getTopY() > enemyArray[i].getY() && playerLaserBeamsArray[j].getBottomY() < enemyArray[i].getY()) {
-				// check if laser beam is between the enemy's furthermost left and right x-coordinates
-				if(playerLaserBeamsArray[j].getLeftX() <= enemyArray[i].getLeftX() && playerLaserBeamsArray[j].getRightX() <= enemyArray[i].getRightX()){
-					   score ++;
-					   enemyArray[i].splice(i, 1);
+       			if(playerLaserBeamsArray[j].getTopY() >= enemyArray[i].getBottomY()) {
+					// check if laser beam is between the enemy's furthermost left and right x-coordinates
+					if(playerLaserBeamsArray[j].getLeftX() <= enemyArray[i].getLeftX() && playerLaserBeamsArray[j].getRightX() <= enemyArray[i].getRightX()){
+						   score ++;
+						   enemyArray.splice(i, 1);
 					}
 				}
 				
@@ -122,7 +132,7 @@
         for(var i = enemyArray.length - 1; i >= 0; i--) {
             enemyArray[i].update();
             enemyArray[i].draw();
-			if(enemyArray[i].getY() > canvas.height) enemyArray.splice(i, 1);
+			if(enemyArray[i].getTopY() > canvas.height) enemyArray.splice(i, 1);
         }
     }
 
@@ -357,8 +367,12 @@
             return x + width;
         };
 
-        this.getY = function() {
+        this.getTopY = function() {
             return y;
+        };
+		
+		 this.getBottomY = function() {
+            return y + height;
         };
 
 
