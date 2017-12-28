@@ -23,7 +23,7 @@
     var frames = 0;
 
     // player variables
-    var dx = 50;
+    var dx = 5;
     var health = 100;
     var healthOffsetX = 50;
     var healthOffsetY = 50;
@@ -50,11 +50,16 @@
     // creating the player object in the bottom middle of the screen
     var player = new SpaceShip(canvas.width/ 2, canvas.height);
 
-	   // Drawing the game
+    // Drawing the game
     setInterval(draw, frameRate);
+
+    // whether or not the left and right arrow keys are pressed
+    var leftPressed = false;
+    var rightPressed = false;
 
     function draw() {
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		player.move(dx);
 		player.draw();
 		drawStars();
 		drawHealth();
@@ -67,15 +72,29 @@
 		frames++;
     }
 
+
+
+    function keyUpHandler(e) {
+        // if left arrow key is pressed
+        if(e.keyCode === 39) {
+           rightPressed = false;
+        }   // if right arrow key is pressed
+        else if(e.keyCode === 37) {
+           leftPressed = false;
+        }
+        // if space bar is pressed
+        else if(e.keyCode === 32) {
+            player.shoot();
+        }
+    }
+
     function keyDownHandler(e) {
         // if left arrow key is pressed
         if(e.keyCode === 39) {
-            player.move(dx);
-            player.draw();
+          rightPressed = true;
         }   // if right arrow key is pressed
         else if(e.keyCode === 37) {
-            player.move(-dx);
-            player.draw();
+            leftPressed = true;
         }
         // if space bar is pressed
         else if(e.keyCode === 32) {
@@ -106,8 +125,8 @@
        			if(playerLaserBeamsArray[j].getTopY() >= enemyArray[i].getBottomY()) {
 					// check if laser beam is between the enemy's furthermost left and right x-coordinates
 					if(playerLaserBeamsArray[j].getLeftX() <= enemyArray[i].getLeftX() && playerLaserBeamsArray[j].getRightX() <= enemyArray[i].getRightX()){
-						   score ++;
-						   enemyArray.splice(i, 1);
+                        score ++;
+                        enemyArray.splice(i, 1);
 					}
 				}
 				
@@ -136,19 +155,6 @@
         }
     }
 
-    function keyUpHandler(e) {
-      /*  if(e.keyCode === 39) {
-            player.move(dx);
-            player.draw();
-        }
-        else if(e.keyCode === 37) {
-            player.move(-dx);
-            player.draw();
-        }
-        else if(e.keyCode === 32) {
-            player.shoot();
-        }*/
-    }
 
     function drawPlayerLaserBeams() {
         for(var i = playerLaserBeamsArray.length - 1; i >= 0; i --) {
@@ -266,8 +272,17 @@
             return x + baseWidth/2 + wingWidth - gunWidth;
         };
 
+        // Moves the spaceship
         this.move = function(dx){
-			if(this.getLeftX() > -dx && this.getRightX() < canvas.width - dx) x += dx;
+            // checking if in bounds of the screen
+            if(this.getLeftX() > dx && this.getRightX() < canvas.width) {
+                if(leftPressed) {
+                    x -= dx;
+                }
+                else if(rightPressed) {
+                    x += dx;
+                }
+            }
         };
 
 
@@ -303,6 +318,7 @@
 
     function PlayerLaserBeam(leftX, rightX, y, width, height) {
         var laserSpeed = -4;
+        this.y = y;
 
         this.draw = function() {
             ctx.beginPath();
