@@ -103,6 +103,7 @@
     }
 
     function gameOver() {
+
     }
 	
 	// Returns whether or not an object is empty, i.e., does not exist. 
@@ -116,13 +117,13 @@
 
     function laserCollision() {
        // if(playerLaserBeamsArray.length === 0) return false;
-        for(var i = enemyArray.length - 1; i >=	0; --i) {
-            for(var j = playerLaserBeamsArray.length-1; j >= 0; --j) {
+        for(var i = enemyArray.length - 1; i >=	0; i--) {
+            for(var j = playerLaserBeamsArray.length-1; j >= 0; j--) {
 				// make sure not to access an object which does not exist.
 				if(isEmpty(playerLaserBeamsArray[j])) break;
 				if(isEmpty(enemyArray[i])) break;
 		    	// check if laser beam is at correct y coordinate
-       			if(playerLaserBeamsArray[j].getTopY() >= enemyArray[i].getBottomY()) {
+       			if(playerLaserBeamsArray[j].getTopY() >= enemyArray[i].getBottomY() && playerLaserBeamsArray[j].getBottomY() <= enemyArray[i].getTopY()) {
 					// check if laser beam is between the enemy's furthermost left and right x-coordinates
 					if(playerLaserBeamsArray[j].getLeftX() <= enemyArray[i].getLeftX() && playerLaserBeamsArray[j].getRightX() <= enemyArray[i].getRightX()){
                         score ++;
