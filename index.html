@@ -276,16 +276,13 @@
         // Moves the spaceship
         this.move = function(dx){
             // checking if in bounds of the screen
-            if(this.getLeftX() > dx && this.getRightX() < canvas.width) {
-                if(leftPressed) {
-                    x -= dx;
-                }
-                else if(rightPressed) {
-                    x += dx;
-                }
+            if(this.getLeftX() > dx && leftPressed) {
+                x -= dx;
+            }
+            else if(this.getRightX() < canvas.width - dx && rightPressed) {
+                x += dx;
             }
         };
-
 
         this.draw = function() {
             drawBase();
